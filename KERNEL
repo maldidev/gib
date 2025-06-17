@@ -1,0 +1,6 @@
+configs/
+disks/
+executables/
+snowflake/
+uefi/
+uefi-img/

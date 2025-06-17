@@ -1,0 +1,48 @@
+#!/bin/bash
+dialog --title "GibCore Firmware" --msgbox "Welcome to Firmware Updater!" 8 50
+
+dialog --menu "Select Action" 15 50 3 \
+    1 "Update Firmware" \
+    2 "View Device Info" \
+    3 "Boot into bootloader" \
+    4 "Exit" 2>menu_choice.txt
+
+choice=$(<menu_choice.txt)
+
+case $choice in
+	1)
+	   (
+	   for i in $(seq 0 5 100); do 
+	   		echo $i
+	   		sleep 0.1
+	   done
+	   ) | dialog --gauge "Searching update.." 10 50 0
+	   dialog --msgbox "No such updates founded!" 8 50
+	   ;;
+	2)
+       dialog --menu "Device Info" 15 50 3 \
+          1 "Top           GibSE C3291U8893" \
+          2 "BIOS          GibCore Firmware" \
+          3 "HD319         ATA 512GB 000001 B1" \
+          4 "BL32          GiBoot.efi" \
+          5 "SerialNum     82761748192" 
+       ;;
+    3)
+       clear
+       dialog --msgbox "Press OK to boot into sector." 6 30
+       clear
+       clear
+       clear
+       clear
+       ./giboot
+       ;;
+    4)
+       dialog --msgbox "Goodbye!" 6 30
+       ;;
+    *)
+       dialog --msgbox "Incorrect. Press OK to quit." 6 30
+       ;;
+    
+esac
+
+rm -f menu_choice.txt

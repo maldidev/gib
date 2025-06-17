@@ -1,0 +1,26 @@
+usage: python
+script:
+
+#!/bin/python3
+from gibutils import *;
+from os import system;
+from os.path import exists;
+
+def main():
+  print("\033[H\033[2JWelcome to \033[92mGibOS\033[0m\n");
+  exec(readconf("etc/sys.conf", " : "));
+  while (1):
+    c = input(f"{hostname}:[{admin}]{prompt}").split();
+    if (c[0] == "exit"):
+      print("Shutting down...");
+      return 0;
+    elif (exists(f"bin/{c[0]}")):
+      system(f"GIBOS_ARGS={repr(' '.join(c[1:]))} ./bin/{c[0]}");
+    elif (c[0] == "fetch"):
+      system(f"GIBOS_ARGS={repr(' '.join(c[1:]))} ./bin/p11/fetch")
+    else:
+      system(" ".join(c));
+  return 0;
+  
+main();
+

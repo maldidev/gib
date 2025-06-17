@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+import os;
+import sys;
+import time;
+import argparse;
+
+from gibutils import *;
+
+def print_help():
+  print("gpm - A simple package manager\n");
+  print("Usage:");
+  print("  gpm <command> [<args>]\n");
+  print("Available commands:");
+  print("  install <package>       Install a package\n");
+  print("Options:");
+  print("  --help            Show this help message and exit");
+
+def main():
+  parser = argparse.ArgumentParser(add_help=False);
+  parser.add_argument("command", nargs='?', help="Command to run");
+  parser.add_argument("arg", nargs='?', help="Optional argument for command");
+  parser.add_argument("--help", action="store_true", help="Show help");
+
+  sys.argv.extend(os.getenv("GIBOS_ARGS").split(" "));
+  args = parser.parse_args();
+
+  if (args.help or not args.command):
+    print_help();
+    exit(0);
+
+  if (args.command == "install"):
+    if (not args.arg):
+      print("Error: `install` requires a package to install");
+      exit(1);
+    conf = readconfd("etc/gpm.conf", "=");
+    if (not conf.get(args.arg)):
+      print(f"package `{args.arg}` not found");
+      exit(1);
+    auth,pack = conf[args.arg].split("/");
+    os.system(f"git clone https://github.com/{auth}/{pack} --depth=1 /tmp/{pack}/");
+    os.system(f"cp /tmp/{pack}/bin/* bin/");
+    os.system("chmod 775 bin/*");
+  else:
+    print(f"Unknown command: `{args.command}`");
+    print("See `gpm --help` for more help");
+    exit(1);
+
+if __name__ == "__main__":
+  main();
+
